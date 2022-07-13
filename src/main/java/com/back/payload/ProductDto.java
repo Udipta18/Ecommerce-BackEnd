@@ -1,25 +1,14 @@
-package com.back.models;
+package com.back.payload;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "das_product")
-public class Product {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int productId;
-
+public class ProductDto {
+private int productId;
+	
 	private String productName;
 
 	private String productDesc;
 
 	private double productPrice;
-
+	
 	private int productQuantity;
 
 	private boolean live;
@@ -27,10 +16,6 @@ public class Product {
 	private boolean stock = true;
 
 	private String imageName;
-
-	public Product() {
-		super();
-	}
 
 	public int getProductId() {
 		return productId;
@@ -64,20 +49,20 @@ public class Product {
 		this.productPrice = productPrice;
 	}
 
-	public boolean isStock() {
-		return stock;
-	}
-
-	public void setStock(boolean stock) {
-		this.stock = stock;
-	}
-
 	public boolean isLive() {
 		return live;
 	}
 
 	public void setLive(boolean isLive) {
 		this.live = isLive;
+	}
+
+	public boolean isStock() {
+		return stock;
+	}
+
+	public void setStock(boolean stock) {
+		this.stock = stock;
 	}
 
 	public String getImageName() {
@@ -95,5 +80,6 @@ public class Product {
 	public void setProductQuantity(int productQuantity) {
 		this.productQuantity = productQuantity;
 	}
-
+	
+	
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import com.back.models.Product;
+import com.back.payload.ProductDto;
 
 
 /**
@@ -20,7 +21,7 @@ public interface ProductService {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	public Product createProduct(Product product);
+	public ProductDto createProduct(ProductDto productDto);
 	
 	/**
 	 * This method returns all products
@@ -29,7 +30,7 @@ public interface ProductService {
 	 * @return List of Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	public  List<Product> getAllProduct();
+	public  List<ProductDto> getAllProduct();
 	
 	
 
@@ -40,7 +41,7 @@ public interface ProductService {
 	 * @return single Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	 public Product getProduct(int productId);
+	 public ProductDto getProduct(int productId);
 	 
 	 /**
 		 * This method can delete product by given product id
@@ -58,5 +59,5 @@ public interface ProductService {
 		 * @return Product
 		 * @see first.Rest.Services.ProductServiceImpl
 		 */
-	 public Product updateProduct(Product newProduct,int productId);
+	 public ProductDto updateProduct(ProductDto newProduct,int productId);
 }

@@ -28,9 +28,24 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto update(UserDto userDto, int userId) {
+	public UserDto update(UserDto t, int userId) {
 		// TODO Auto-generated method stub
-		return null;
+		User u = this.userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with userId " + userId));
+
+		u.setName(t.getName());
+		u.setEmail(t.getEmail());
+		u.setPassword(t.getPassword());
+		u.setAbout(t.getAbout());
+		u.setAddress(t.getAddress());
+		u.setActive(t.isActive());
+		u.setGender(t.getGender());
+		u.setCreateAt(t.getCreateAt());
+		u.setPhone(t.getPhone());
+
+		User updatedUser = this.userRepository.save(u);
+
+		return this.toDto(updatedUser);
 	}
 
 	@Override
