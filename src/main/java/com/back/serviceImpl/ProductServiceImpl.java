@@ -6,45 +6,68 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.back.exception.ResourceNotFoundException;
+import com.back.models.Category;
 import com.back.models.Product;
 import com.back.payload.ProductDto;
+import com.back.payload.ProductResponse;
+import com.back.repo.CategoryRepository;
 import com.back.repo.ProductRepository;
 import com.back.service.ProductService;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
 	@Autowired
 	private ModelMapper modelMapper;
 
 	@Override
-	public ProductDto createProduct(ProductDto productDto) {
+	public ProductDto createProduct(ProductDto productDto, int categoryId) {
 		// TODO Auto-generated method stub
-		Product map = modelMapper.map(productDto, Product.class);
-		Product createdProudct = productRepository.save(map);
+		Category cat = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new ResourceNotFoundException("category ID not found" + categoryId));
+		Product product = modelMapper.map(productDto, Product.class);
+		product.setCategory(cat);
+		Product createdProudct = productRepository.save(product);
 		return modelMapper.map(createdProudct, ProductDto.class);
 	}
 
 	@Override
-	public List<ProductDto> getAllProduct() {
-		// TODO Auto-generated method stub
-		List<Product> all = this.productRepository.findAll();
-		List<ProductDto> dtos = all.stream().map(product -> this.modelMapper.map(product, ProductDto.class)).collect(Collectors.toList());
+	public ProductResponse getAllProduct(int pageNo, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> page = this.productRepository.findAll(pageable);
+		List<Product> all = page.getContent();
+		List<ProductDto> dtos = all.stream().map(product -> this.modelMapper.map(product, ProductDto.class))
+				.collect(Collectors.toList());
 
-				
-		return dtos;
+		ProductResponse response = new ProductResponse();
+
+		response.setContent(dtos);
+		response.setPageNumber(page.getNumber());
+		response.setPageSize(page.getSize());
+		response.setTotalElements(page.getTotalElements());
+		response.setTotalPages(page.getTotalPages());
+		response.setLastPage(page.isLast());
+
+		return response;
 	}
 
 	@Override
 	public ProductDto getProduct(int productId) {
 		// TODO Auto-generated method stub
-		Product productById = productRepository.findById(productId).orElseThrow(()->new ResourceNotFoundException("product id not found "+productId));
+		Product productById = productRepository.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("product id not found " + productId));
 		ProductDto productDto = modelMapper.map(productById, ProductDto.class);
 		return productDto;
 	}
@@ -72,6 +95,29 @@ public class ProductServiceImpl implements ProductService{
 		Product updatedProduct = this.productRepository.save(product);
 		return this.modelMapper.map(updatedProduct, ProductDto.class);
 	}
-	
+
+	@Override
+	public ProductResponse getProductByCategory(int categoryId, int pageNo, int pageSize) {
+		// TODO Auto-generated method stub
+		Category cat = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new ResourceNotFoundException("category ID not found" + categoryId));
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> page = productRepository.findByCategory(cat, pageable);
+
+		List<Product> all = page.getContent();
+		List<ProductDto> dtos = all.stream().map((product) -> this.modelMapper.map(product, ProductDto.class))
+				.collect(Collectors.toList());
+
+		ProductResponse response = new ProductResponse();
+
+		response.setContent(dtos);
+		response.setPageNumber(page.getNumber());
+		response.setPageSize(page.getSize());
+		response.setTotalElements(page.getTotalElements());
+		response.setTotalPages(page.getTotalPages());
+		response.setLastPage(page.isLast());
+
+		return response;
+	}
 
 }

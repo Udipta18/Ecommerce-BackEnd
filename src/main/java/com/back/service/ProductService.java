@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import com.back.models.Product;
 import com.back.payload.ProductDto;
+import com.back.payload.ProductResponse;
 
 
 /**
@@ -21,7 +22,7 @@ public interface ProductService {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	public ProductDto createProduct(ProductDto productDto);
+	public ProductDto createProduct(ProductDto productDto,int categoryId);
 	
 	/**
 	 * This method returns all products
@@ -30,7 +31,7 @@ public interface ProductService {
 	 * @return List of Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	public  List<ProductDto> getAllProduct();
+	public  ProductResponse getAllProduct(int pageNo,int pageSize);
 	
 	
 
@@ -60,4 +61,6 @@ public interface ProductService {
 		 * @see first.Rest.Services.ProductServiceImpl
 		 */
 	 public ProductDto updateProduct(ProductDto newProduct,int productId);
+	 
+	 public  ProductResponse getProductByCategory(int categoryId,int pageNo,int pageSize);
 }

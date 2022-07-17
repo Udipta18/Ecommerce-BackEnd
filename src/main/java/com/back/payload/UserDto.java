@@ -2,23 +2,36 @@ package com.back.payload;
 
 import java.util.Date;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class UserDto {
 	private int userId;
 
+	
+	@NotEmpty
+	@Size(min = 4,max = 20,message = "name must be min of 4 characters and max of 20 character !!")
 	private String name;
 
+	@Email
 	private String email;
 
+	@NotEmpty
+	@Size(min = 4,message = "Password must be of 4 digits !!")
 	private String password;
 
 	private String address;
 
+	@NotEmpty
 	private String about;
 
 	private String gender;
 
 	private Date createAt;
 
+	@NotBlank
 	private String phone;
 
 	// at according to you

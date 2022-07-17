@@ -1,9 +1,15 @@
 package com.back.models;
 
+import java.util.Set;
+import java.util.*;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 
@@ -15,6 +21,12 @@ public class Category {
 	private int categoryId;
 	
 	private String title;
+	
+	@OneToMany(mappedBy = "category",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	private Set<Product> products=new HashSet<>();
+
+	
+	
 
 	public Category() {
 		super();
@@ -43,6 +55,12 @@ public class Category {
 		this.title = title;
 	}
 	
-	
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
 	
 }

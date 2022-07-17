@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 
+import javax.validation.Valid;
+
 import com.back.payload.ApiResponse;
 import com.back.payload.UserDto;
 import com.back.service.UserService;
@@ -27,7 +29,7 @@ public class UserController {
 	
 	//201-created
 	@PostMapping("/")
-	public ResponseEntity<UserDto>  createUser(@RequestBody UserDto userDto ) {
+	public ResponseEntity<UserDto>  createUser(@Valid @RequestBody UserDto userDto ) {
 		userDto.setCreateAt(new Date());
 		userDto.setActive(true);
 		UserDto createdUser = userService.create(userDto);
@@ -60,7 +62,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/{userId}")
-	public ResponseEntity<UserDto> updateUser( @RequestBody UserDto userDto, @PathVariable int userId) {
+	public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto, @PathVariable int userId) {
 		UserDto updatedUser = this.userService.update(userDto, userId);
 		return new ResponseEntity<UserDto>(updatedUser, HttpStatus.OK);
 	}

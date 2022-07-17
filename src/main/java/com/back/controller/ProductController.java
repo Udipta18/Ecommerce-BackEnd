@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.back.models.Product;
 import com.back.payload.ApiResponse;
 import com.back.payload.ProductDto;
+import com.back.payload.ProductResponse;
 import com.back.service.ProductService;
 
 /**
@@ -30,6 +32,7 @@ import com.back.service.ProductService;
  *
  */
 @RestController
+@RequestMapping("/")
 public class ProductController {
 	@Autowired
 	private ProductService service;
@@ -42,9 +45,9 @@ public class ProductController {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	@PostMapping("/products")
-	public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto p) {
-		ProductDto createProduct = service.createProduct(p);
+	@PostMapping("/categories/{categoryId}/products")
+	public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto p, @PathVariable int categoryId) {
+		ProductDto createProduct = service.createProduct(p, categoryId);
 		return new ResponseEntity<ProductDto>(createProduct, HttpStatus.CREATED);
 
 	}
@@ -59,9 +62,11 @@ public class ProductController {
 
 // @RequestMapping(value = "/all-product",method = RequestMethod.GET)
 	@GetMapping("/products")
-	public ResponseEntity<List<ProductDto>> getAllProduct() {
-		List<ProductDto> allProduct = service.getAllProduct();
-		return new ResponseEntity<List<ProductDto>>(allProduct, HttpStatus.OK);
+	public ResponseEntity<ProductResponse> getAllProduct(
+			@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize) {
+		ProductResponse allProduct = service.getAllProduct(pageNo, pageSize);
+		return new ResponseEntity<ProductResponse>(allProduct, HttpStatus.OK);
 	}
 
 	/**
@@ -105,9 +110,19 @@ public class ProductController {
 	 */
 
 	@PutMapping("/products/{productId}")
-	public  ResponseEntity<ProductDto>  updateProduct(@PathVariable("productId") int pid, @RequestBody ProductDto newProduct) {
-		 ProductDto updateProduct = service.updateProduct(newProduct, pid);
+	public ResponseEntity<ProductDto> updateProduct(@PathVariable("productId") int pid,
+			@RequestBody ProductDto newProduct) {
+		ProductDto updateProduct = service.updateProduct(newProduct, pid);
 		return new ResponseEntity<ProductDto>(updateProduct, HttpStatus.OK);
+	}
+
+	// categories wise product fetch
+	@GetMapping("/categories/{categoryId}/products")
+	public ResponseEntity<ProductResponse> getProductByCategory(@PathVariable int categoryId,
+			@RequestParam(value = "pageNo", required = false, defaultValue = "0") int pageNo,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
+		ProductResponse productByCategory = service.getProductByCategory(categoryId, pageNo, pageSize);
+		return new ResponseEntity<ProductResponse>(productByCategory, HttpStatus.OK);
 	}
 
 }
