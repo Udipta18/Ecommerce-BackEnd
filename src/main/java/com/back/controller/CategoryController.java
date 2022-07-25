@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.back.payload.ApiResponse;
 import com.back.payload.CategoryDto;
+import com.back.payload.CategoryResponse;
 import com.back.service.CategoryService;
+import com.config.AppConstants;
 
 @RestController
 @RequestMapping("/categories")
@@ -57,9 +60,15 @@ public class CategoryController {
 
 	// getall
 
-	@GetMapping("/")
-	public ResponseEntity<List<CategoryDto>> get() {
-		List<CategoryDto> list = this.categoryService.get();
-		return new ResponseEntity<List<CategoryDto>>(list, HttpStatus.OK);
+	@GetMapping("/pagination")
+	public ResponseEntity<CategoryResponse> get(
+			@RequestParam(value = "pageNo", defaultValue = AppConstants.PAGE_NUMBER_STRING, required = false) int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE_STRING, required = false) int pageSize,
+			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY_CATEGORY_ID, required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR_STRING, required = false) String sortDir
+			
+			) {
+		 CategoryResponse response = this.categoryService.get(pageNo,pageSize,sortBy,sortDir);
+		return new ResponseEntity<CategoryResponse>(response, HttpStatus.OK);
 	}
 }

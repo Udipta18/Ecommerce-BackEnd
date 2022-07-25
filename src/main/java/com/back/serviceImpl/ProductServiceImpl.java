@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.back.exception.ResourceNotFoundException;
@@ -44,8 +45,16 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public ProductResponse getAllProduct(int pageNo, int pageSize) {
-		Pageable pageable = PageRequest.of(pageNo, pageSize);
+	public ProductResponse getAllProduct(int pageNo, int pageSize,String sortBy,String sortDir) {
+		Sort sr=null;
+		if(sortDir.trim().toLowerCase().equals("asc")) {
+			sr=Sort.by(sortBy).ascending();
+		}
+		else{
+			sr=Sort.by(sortBy).descending();
+		}
+		
+		Pageable pageable = PageRequest.of(pageNo, pageSize,sr);
 		Page<Product> page = this.productRepository.findAll(pageable);
 		List<Product> all = page.getContent();
 		List<ProductDto> dtos = all.stream().map(product -> this.modelMapper.map(product, ProductDto.class))

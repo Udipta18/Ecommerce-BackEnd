@@ -23,6 +23,7 @@ import com.back.payload.ApiResponse;
 import com.back.payload.ProductDto;
 import com.back.payload.ProductResponse;
 import com.back.service.ProductService;
+import com.config.AppConstants;
 
 /**
  * This class contains all the urls to Create,Update,Fetch and Delete Products;
@@ -63,9 +64,12 @@ public class ProductController {
 // @RequestMapping(value = "/all-product",method = RequestMethod.GET)
 	@GetMapping("/products")
 	public ResponseEntity<ProductResponse> getAllProduct(
-			@RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-			@RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize) {
-		ProductResponse allProduct = service.getAllProduct(pageNo, pageSize);
+			@RequestParam(value = "pageNo", defaultValue = AppConstants.PAGE_NUMBER_STRING, required = false) int pageNo,
+			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE_STRING, required = false) int pageSize,
+			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY_STRING, required = false) String sortBy,
+			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR_STRING, required = false) String sortDir
+) {
+		ProductResponse allProduct = service.getAllProduct(pageNo, pageSize,sortBy,sortDir);
 		return new ResponseEntity<ProductResponse>(allProduct, HttpStatus.OK);
 	}
 

@@ -31,7 +31,7 @@ public interface ProductService {
 	 * @return List of Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-	public  ProductResponse getAllProduct(int pageNo,int pageSize);
+	public  ProductResponse getAllProduct(int pageNo,int pageSize,String sortBy,String sortDir);
 	
 	
 

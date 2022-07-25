@@ -3,6 +3,7 @@ package com.back.service;
 import java.util.List;
 
 import com.back.payload.CategoryDto;
+import com.back.payload.CategoryResponse;
 
 public interface CategoryService  {
 	// create
@@ -21,5 +22,5 @@ public interface CategoryService  {
 		CategoryDto get(int categoryId);
 
 		//get all
-		List<CategoryDto> get();
+		CategoryResponse get(int pageNo,int pageSize,String sortBy,String sortDir);
 }
