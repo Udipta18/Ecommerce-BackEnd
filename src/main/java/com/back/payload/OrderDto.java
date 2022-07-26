@@ -1,23 +1,9 @@
-package com.back.models;
+package com.back.payload;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "ecom_order")
-public class Order {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class OrderDto {
 	private int orderId;
 
 	private String orderStatus;
@@ -31,12 +17,10 @@ public class Order {
 	private String billingAddress;
 
 	private Date orderDelivered;
-
-	@OneToOne
-	private User user;
-
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private Set<OrderItem> items = new HashSet<>();
+	
+	private UserDto user;
+	
+	private Set<OrderItemDto> items=new HashSet<>();
 
 	public int getOrderId() {
 		return orderId;
@@ -94,20 +78,21 @@ public class Order {
 		this.orderDelivered = orderDelivered;
 	}
 
-	public User getUser() {
+	public UserDto getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(UserDto user) {
 		this.user = user;
 	}
 
-	public Set<OrderItem> getItems() {
+	public Set<OrderItemDto> getItems() {
 		return items;
 	}
 
-	public void setItems(Set<OrderItem> items) {
+	public void setItems(Set<OrderItemDto> items) {
 		this.items = items;
 	}
-
+	
+	
 }
