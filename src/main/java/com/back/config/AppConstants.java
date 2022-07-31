@@ -7,4 +7,5 @@ public class AppConstants {
 	public static final String SORT_BY_STRING="productId";
 	public static final String SORT_DIR_STRING="asc";
 	public static final String SORT_BY_CATEGORY_ID="categoryId";
+	public static final String SORT_BY_PRODUCT_ID="productId";
 }
