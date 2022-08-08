@@ -16,11 +16,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 
+
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	Logger logger2 = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
@@ -35,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		String requestToken = request.getHeader("Authorization");
-		logger2.info("message ", requestToken);
+		logger2.info("message{} ", requestToken);
 
 		String userName = "";
 		String jwtToken = "";
@@ -47,11 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			try {
 				userName = this.jwtHelper.getUsernameFromToken(jwtToken);
 			} catch (ExpiredJwtException e) {
-				logger2.info("Invalid token message ", "Jwt token expired!!");
+				logger2.info("Invalid token message {}", "Jwt token expired!!");
 			} catch (MalformedJwtException e) {
-				logger2.info("Invalid token message ", "Invalid Jwt Token");
+				logger2.info("Invalid token message {} ", "Invalid Jwt Token");
 			} catch (IllegalArgumentException e) {
-				logger2.info("Invalid token message ", "Unable to get token");
+				logger2.info("Invalid token message {} ", "Unable to get token");
 			}
 
 			if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -66,16 +69,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(auth);
 				}
 				else {
-					logger2.info("Not Validated Message","Invalid Jwt token");
+					logger2.info("Not Validated Message {}","Invalid Jwt token");
 				}
 			}
 			else {
-				logger2.info("username message ", "username is null or auth is already there");
+				logger2.info("username message {}", "username is null or auth is already there");
 			}
 
 		}
 		else {
-            logger2.info("token message ", "token does not starts with brearer");
+            logger2.info("token message {} ", "token does not starts with brearer");
         }
 		
 		

@@ -3,7 +3,9 @@ package com.back.models;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
@@ -53,7 +56,7 @@ public class User implements UserDetails {
 	@OneToOne(mappedBy="user")
 	private Cart cart;
 	
-	@ManyToMany(fetch = FetchType.EAGER,mappedBy = "users")
+	@ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
 	public User(int userId, String name, String email, String password, String address, String about, String gender,
@@ -164,9 +167,11 @@ public class User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+		List<SimpleGrantedAuthority> list = this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+		return list;
 	}
+
+	
 
 	@Override
 	public String getPassword() {
@@ -205,6 +210,13 @@ public class User implements UserDetails {
 		return true;
 	}
 	
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
 	
 
 }

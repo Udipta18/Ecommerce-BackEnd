@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.back.exception.ResourceNotFoundException;
+import com.back.models.Role;
 import com.back.models.User;
 import com.back.payload.UserDto;
+import com.back.repo.RoleRepository;
 import com.back.repo.UserRepository;
 import com.back.service.UserService;
 
@@ -18,11 +21,19 @@ import com.back.service.UserService;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private ModelMapper mapper;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Override
 	public UserDto create(UserDto userDto) {
 		// TODO Auto-generated method stub
 		User u = this.toEntity(userDto);
+		  Role role = this.roleRepository.findById(7412).get();
+		  u.getRoles().add(role);
 		User createdUser = userRepository.save(u);
 		return this.toDto(createdUser);
 	}
@@ -80,35 +91,11 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public UserDto toDto(User user) {
-		UserDto dto = new UserDto();
-		dto.setUserId(user.getUserId());
-		dto.setName(user.getName());
-		dto.setEmail(user.getEmail());
-		dto.setPassword(user.getPassword());
-		dto.setAbout(user.getAbout());
-		dto.setAddress(user.getAddress());
-		dto.setActive(user.isActive());
-		dto.setGender(user.getGender());
-		dto.setCreateAt(user.getCreateAt());
-		dto.setPhone(user.getPhone());
-
-		return dto;
+		return this.mapper.map(user, UserDto.class);
 	}
 
 	public User toEntity(UserDto t) {
-		User u = new User();
-		u.setUserId(t.getUserId());
-		u.setName(t.getName());
-		u.setEmail(t.getEmail());
-		u.setPassword(t.getPassword());
-		u.setAbout(t.getAbout());
-		u.setAddress(t.getAddress());
-		u.setActive(t.isActive());
-		u.setGender(t.getGender());
-		u.setCreateAt(t.getCreateAt());
-		u.setPhone(t.getPhone());
-
-		return u;
+		  return this.mapper.map(t, User.class);
 	}
 
 }

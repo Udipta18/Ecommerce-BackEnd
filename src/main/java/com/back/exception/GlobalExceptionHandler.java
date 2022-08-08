@@ -23,6 +23,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ApiResponse>(api,HttpStatus.NOT_FOUND);
 	}
 	
+	@ExceptionHandler(BadUserLoginDetailsException.class)
+	public ResponseEntity<ApiResponse> handleBadUserLoginDetailsException(BadUserLoginDetailsException ex) {
+		ApiResponse api=new ApiResponse(ex.getMessage(), false);
+		return new ResponseEntity<ApiResponse>(api,HttpStatus.NOT_FOUND);
+	}
+	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
 		   Map<String,String> map=new HashMap<>();

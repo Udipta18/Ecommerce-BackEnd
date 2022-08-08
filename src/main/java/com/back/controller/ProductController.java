@@ -1,11 +1,22 @@
 package com.back.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +28,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.back.config.AppConstants;
 import com.back.models.Product;
 import com.back.payload.ApiResponse;
 import com.back.payload.ProductDto;
 import com.back.payload.ProductResponse;
+import com.back.service.FileUpload;
 import com.back.service.ProductService;
 
 /**
@@ -37,6 +50,13 @@ import com.back.service.ProductService;
 public class ProductController {
 	@Autowired
 	private ProductService service;
+	
+	@Autowired
+	private FileUpload fileUpload;
+	
+	@Value("${product.images.path}")
+    private String imagePath;
+
 
 	/**
 	 * This method provide url to create product
@@ -46,6 +66,7 @@ public class ProductController {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/categories/{categoryId}/products")
 	public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto p, @PathVariable int categoryId) {
 		ProductDto createProduct = service.createProduct(p, categoryId);
@@ -96,7 +117,7 @@ public class ProductController {
 	 * @return message in the form of String
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/products/{productId}")
 	public ResponseEntity<ApiResponse> deleteProduct(@PathVariable int productId) {
 		service.deleteProduct(productId);
@@ -112,7 +133,7 @@ public class ProductController {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
-
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/products/{productId}")
 	public ResponseEntity<ProductDto> updateProduct(@PathVariable("productId") int pid,
 			@RequestBody ProductDto newProduct) {
@@ -128,5 +149,43 @@ public class ProductController {
 		ProductResponse productByCategory = service.getProductByCategory(categoryId, pageNo, pageSize);
 		return new ResponseEntity<ProductResponse>(productByCategory, HttpStatus.OK);
 	}
+	
+	
+	//upload the file for product image
+
+    @PostMapping("/products/images/{productId}")
+    public ResponseEntity<?> uploadImageOfProduct(
+            @PathVariable int productId,
+            @RequestParam("product_image") MultipartFile file
+    ) {
+
+        ProductDto product = this.service.getProduct(productId);
+        String imageName = null;
+        try {
+            imageName = this.fileUpload.uploadFile(imagePath, file);
+            product.setImageName(imageName);
+            ProductDto productDto = this.service.updateProduct(product, productId);
+            return new ResponseEntity<>(productDto, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(Map.of("message", "File not uploaded on server !!"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+    
+  //get the image of given product
+    @GetMapping("/products/images/{productId}")
+    public void downloadImage(@PathVariable int productId, HttpServletResponse response) throws IOException {
+        ProductDto product = this.service.getProduct(productId);
+        String imageName = product.getImageName();
+        String fullPath = imagePath + File.separator + imageName;
+        InputStream resource = this.fileUpload.getResource(fullPath);
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        OutputStream outputStream = response.getOutputStream();
+        StreamUtils.copy(resource, outputStream);
+
+    }
 
 }

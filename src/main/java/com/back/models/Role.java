@@ -11,35 +11,45 @@ import javax.persistence.ManyToMany;
 
 @Entity
 public class Role {
-	     @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private int id;
-	    private String name;
+	@Id
+	private int id;
 
-	    @ManyToMany
-	    private Set<User> users=new HashSet<>();
+	private String name;
 
-	    public Role(int id, String name) {
-	        this.id = id;
-	        this.name = name;
-	    }
+	@ManyToMany(mappedBy="roles")
+	private Set<User> users = new HashSet<>();
 
-	    public Role() {
-	    }
+	public Role(int id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
-	    public int getId() {
-	        return id;
-	    }
+	public Role() {
+	}
 
-	    public void setId(int id) {
-	        this.id = id;
-	    }
+	public int getId() {
+		return id;
+	}
 
-	    public String getName() {
-	        return name;
-	    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-	    public void setName(String name) {
-	        this.name = name;
-	    }
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
+	}
+	
+	
 }

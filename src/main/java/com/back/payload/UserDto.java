@@ -1,25 +1,29 @@
 package com.back.payload;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserDto {
 	private int userId;
 
-	
 	@NotEmpty
-	@Size(min = 4,max = 20,message = "name must be min of 4 characters and max of 20 character !!")
+	@Size(min = 4, max = 20, message = "name must be min of 4 characters and max of 20 character !!")
 	private String name;
 
 	@Email
 	private String email;
 
 	@NotEmpty
-	@Size(min = 4,message = "Password must be of 4 digits !!")
+	@Size(min = 4, message = "Password must be of 4 digits !!")
 	private String password;
 
 	private String address;
@@ -37,6 +41,8 @@ public class UserDto {
 	// at according to you
 
 	private boolean active;
+
+	private Set<RoleDto> roles = new HashSet<>();
 
 	public int getUserId() {
 		return userId;
@@ -61,11 +67,13 @@ public class UserDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+ 
+	@JsonIgnore
 	public String getPassword() {
 		return password;
 	}
 
+	@JsonProperty
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -117,6 +125,13 @@ public class UserDto {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
-	
+
+	public Set<RoleDto> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<RoleDto> roles) {
+		this.roles = roles;
+	}
+
 }

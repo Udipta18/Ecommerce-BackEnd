@@ -1,5 +1,6 @@
 package com.back.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,9 @@ import java.util.*;
 
 import javax.validation.Valid;
 
+import com.back.models.Role;
 import com.back.payload.ApiResponse;
+import com.back.payload.RoleDto;
 import com.back.payload.UserDto;
 import com.back.service.UserService;
 
@@ -30,12 +33,20 @@ public class UserController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private ModelMapper mapper;
+	
 	
 	//201-created
 	@PostMapping("/")
 	public ResponseEntity<UserDto>  createUser(@Valid @RequestBody UserDto userDto ) {
 		userDto.setCreateAt(new Date());
 		userDto.setActive(true);
+		/*
+		 * Role role2 = new Role(); role2.setId(7412); role2.setName("ROLE_NORMAL");
+		 * Set<RoleDto> roles = new HashSet<>(); roles.add(this.mapper.map(role2,
+		 * RoleDto.class)); userDto.setRoles(roles);
+		 */
 		userDto.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
 		UserDto createdUser = userService.create(userDto);
 		System.out.println("SUCCESSFULLY CREATED");

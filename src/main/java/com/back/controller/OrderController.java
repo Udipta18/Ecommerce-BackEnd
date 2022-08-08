@@ -1,5 +1,6 @@
 package com.back.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,14 @@ import com.back.service.OrderService;
 @RequestMapping("/order")
 public class OrderController {
 
-	static String username="sksubhgo@gmail.com";
+	/* static String username="sksubhgo@gmail.com"; */
 	
 	@Autowired
 	private OrderService orderService;
 	
 	@PostMapping("/")
-	public ResponseEntity<OrderDto> createOrder(@RequestBody OrderRequest order){
-		OrderDto createOrder = this.orderService.createOrder(order, username);
+	public ResponseEntity<OrderDto> createOrder(@RequestBody OrderRequest order,Principal principal){
+		OrderDto createOrder = this.orderService.createOrder(order, principal.getName());
 		return new ResponseEntity<OrderDto>(createOrder,HttpStatus.OK);
 		
 	}
