@@ -27,7 +27,7 @@ public class CodeaWithUdiptaEcommerceBackendApplication implements CommandLineRu
 	public static void main(String[] args) {
 		SpringApplication.run(CodeaWithUdiptaEcommerceBackendApplication.class, args);
 		
-	}
+	} 
 	
 	
 	@Bean
