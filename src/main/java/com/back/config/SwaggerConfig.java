@@ -21,6 +21,8 @@ public class SwaggerConfig {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
+    //START
+    //THIS THREE METHODS STANDS FOR JWT AUTHENTICATION IN SWAGGER PAGE
     private ApiKey apiKey() {
         return new ApiKey(AUTHORIZATION_HEADER, "Authorization", "header");
     }
@@ -38,6 +40,7 @@ public class SwaggerConfig {
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference(AUTHORIZATION_HEADER, authorizationScopes));
     }
+    //END
 
     @Bean
     public Docket getDocket() {
@@ -52,6 +55,7 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInformation() {
+    	//this method for the first few lines in swagger page like(terms of service,send email to)
         return new ApiInfo("API of MyShop created while learning spring boot", "These apis are created by durgesh kumar tiwari, get more from below apis and details", "1.0", "Terms of Service", new Contact("Durgesh Kumar Tiwari", "https://www.learncodewithdurgesh.com", "learncodewithdurgesh.com"), "License of Apis : Under LCWD", "https://learncodewithdurgesh.com/about", Collections.emptyList());
     }
 
