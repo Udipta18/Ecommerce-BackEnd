@@ -21,10 +21,10 @@ import com.back.payload.OrderRequest;
 import com.back.service.OrderService;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 
-	/* static String username="sksubhgo@gmail.com"; */
+	
 	
 	@Autowired
 	private OrderService orderService;
@@ -43,7 +43,7 @@ public class OrderController {
 		return new ResponseEntity<ApiResponse>(new ApiResponse("successfully deleted", false),HttpStatus.OK);
 	}
 	
-	@GetMapping("/")
+	@GetMapping("/all")
 	public ResponseEntity<List<OrderDto>> getAllOrder(){
 		List<OrderDto> all = this.orderService.getAll();
 		return new ResponseEntity<List<OrderDto>>(all,HttpStatus.OK);
@@ -60,4 +60,11 @@ public class OrderController {
 		OrderDto orderDto = this.orderService.get(orderId);
 		return new ResponseEntity<OrderDto>(orderDto,HttpStatus.OK);
 	}
+	
+	@GetMapping("/")
+    public ResponseEntity<List<OrderDto>> getOrders(Principal principal) {
+        return new ResponseEntity<>(this.orderService.getOrderOfUser(principal.getName()), HttpStatus.OK);
+    }
+	
+	
  }

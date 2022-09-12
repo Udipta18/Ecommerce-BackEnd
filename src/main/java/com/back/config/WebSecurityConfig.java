@@ -1,6 +1,7 @@
 package com.back.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,15 +15,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.back.security.JwtAuthenticationFilter;
 import com.back.security.jwtAuthenticationEntryPoint;
 
 import org.springframework.security.config.annotation.web.configuration.*;
 
+
+
+
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)//this annotation is basically used for restrict any method in controller in basis of admin or normal user
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService userDetailsService; 
@@ -43,6 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JwtAuthenticationFilter filter;
 
+	
+	//this method for database authentication
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 	auth.userDetailsService(this.userDetailsService).passwordEncoder(passwordEncoder());
@@ -59,12 +68,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		    .antMatchers(HttpMethod.GET).permitAll()
 		    .anyRequest()
 		    .authenticated()
-		    .and()
+		    .and()//it is because if some unauthorized person trying to use the api's then exception will be handled by authentication entry point class
 		    .exceptionHandling().authenticationEntryPoint(entryPoint)
 		    .and()
 		    .sessionManagement()
-		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//it is because jwt works in stateless mode i.e no data stored in server
 		
+		
+		//to add filter before every request 
 		http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 		    
 	}
@@ -75,12 +86,49 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
+	
+	
+	
+	/*
+	 * this method basically used to authenticate username password that we get from
+	 * requestbody from auth controller and bean tagged so we can authowired it
+	 * where needed
+	 */
+	
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		// TODO Auto-generated method stub
 		return super.authenticationManagerBean();
 	}
+	
+	    @Bean
+	    public FilterRegistrationBean corsFilter() {
+
+	        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+	        CorsConfiguration configuration = new CorsConfiguration();
+
+	        configuration.setAllowCredentials(true);
+	        configuration.addAllowedOriginPattern("*");
+	        configuration.addAllowedHeader("Authorization");
+	        configuration.addAllowedHeader("Content-Type");
+	        configuration.addAllowedHeader("Accept");
+	        configuration.addAllowedMethod("POST");
+	        configuration.addAllowedMethod("GET");
+	        configuration.addAllowedMethod("DELETE");
+	        configuration.addAllowedMethod("PUT");
+	        configuration.addAllowedMethod("OPTIONS");
+	        configuration.setMaxAge(3600L);
+
+
+	        source.registerCorsConfiguration("/**", configuration);
+
+
+	        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+	        bean.setOrder(-110);
+	        return bean;
+	    }
 
 	
 	

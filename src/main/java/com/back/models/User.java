@@ -22,7 +22,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users") //UserDetails for the core details of user for security purpose that to get getPassword,gertUserName,isAccountLocked etc
 public class User implements UserDetails {
 
 	@Id
@@ -33,6 +33,7 @@ public class User implements UserDetails {
 	private String name;
 
 	// consider email is user name
+	//it must be unique
 	@Column(unique = true)
 	private String email;
 
@@ -165,6 +166,13 @@ public class User implements UserDetails {
 		this.cart = cart;
 	}
 
+	
+	/*
+	 * //this method for role based authorities because when spring security run it
+	 * will fetch the authorities from this method and it will get all the
+	 * authorities as a list
+	 */
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> list = this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());

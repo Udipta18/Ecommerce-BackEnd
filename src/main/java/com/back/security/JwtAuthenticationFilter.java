@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 
-
+//adding component annotation so that we can use it in other classes as well
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	Logger logger2 = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
@@ -37,6 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
+		//get the token from header
+		//Authorization=Bearer 21334.343hag56.haghh4566
 		String requestToken = request.getHeader("Authorization");
 		logger2.info("message{} ", requestToken);
 
@@ -48,6 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			jwtToken = requestToken.substring(7);
 
 			try {
+				
+				//get username from token with the help of jwtHelper class
 				userName = this.jwtHelper.getUsernameFromToken(jwtToken);
 			} catch (ExpiredJwtException e) {
 				logger2.info("Invalid token message {}", "Jwt token expired!!");
@@ -57,11 +61,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				logger2.info("Invalid token message {} ", "Unable to get token");
 			}
 
+			
+			//validate              //this is for check no authentication is already set before hand
 			if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
 
 				if (this.jwtHelper.validateToken(jwtToken, userDetails)) {
-
+                         //authentication need to be set in this step
 					UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails,
 							null, userDetails.getAuthorities());
 					auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -78,10 +84,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		}
 		else {
-            logger2.info("token message {} ", "token does not starts with brearer");
+            logger2.info("token message {} ", "token does not starts with bearer");
         }
 		
-		
+		//request all set after filtration
 		filterChain.doFilter(request, response);
 
 	}

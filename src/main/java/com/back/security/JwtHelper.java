@@ -11,11 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+
+//adding component annotation so that we can use it in other classes as well
 @Component
 public class JwtHelper {
 
+	
+	//total time till which a single token will be valid
 	public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+	//secret unique key may be different for different projects 
 	private String secret = "jwtTokenKey";
 
 	// retrieve username from jwt token

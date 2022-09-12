@@ -34,8 +34,14 @@ public class CodeaWithUdiptaEcommerceBackendApplication implements CommandLineRu
 	public ModelMapper mapper() {
 		return new ModelMapper();
 	}
-
-
+ 
+	/*
+	 * CommandLineRunner an interface basically used to run non static things and it
+	 * will give us method run to run things once application get started .....Here
+	 * we used it basically for set the roles once when application get started
+	 * under the run method
+	 */
+    
 	@Override
 	public void run(String... args) throws Exception {
 		

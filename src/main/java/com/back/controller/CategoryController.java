@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.back.service.CategoryService;
 
 @RestController
 @RequestMapping("/categories")
+
 public class CategoryController {
 
 	@Autowired
@@ -75,4 +77,12 @@ public class CategoryController {
 		 CategoryResponse response = this.categoryService.get(pageNo,pageSize,sortBy,sortDir);
 		return new ResponseEntity<CategoryResponse>(response, HttpStatus.OK);
 	}
+	
+	// getallWithoutPagination
+
+		@GetMapping("/")
+		public ResponseEntity<List<CategoryDto>> get() {
+			List<CategoryDto> list = this.categoryService.get();
+			return new ResponseEntity<List<CategoryDto>>(list, HttpStatus.OK);
+		}
 }

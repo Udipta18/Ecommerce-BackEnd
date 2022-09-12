@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ import com.back.service.ProductService;
  */
 @RestController
 @RequestMapping("/")
+
 public class ProductController {
 	@Autowired
 	private ProductService service;
@@ -66,6 +68,8 @@ public class ProductController {
 	 * @return Product
 	 * @see first.Rest.Services.ProductServiceImpl
 	 */
+	
+	//so that only admin can create any product no other person have access for this api
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/categories/{categoryId}/products")
 	public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto p, @PathVariable int categoryId) {
@@ -85,7 +89,7 @@ public class ProductController {
 // @RequestMapping(value = "/all-product",method = RequestMethod.GET)
 	@GetMapping("/products")
 	public ResponseEntity<ProductResponse> getAllProduct(
-			@RequestParam(value = "pageNo", defaultValue = AppConstants.PAGE_NUMBER_STRING, required = false) int pageNo,
+			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER_STRING, required = false) int pageNo,
 			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE_STRING, required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY_STRING, required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR_STRING, required = false) String sortDir
@@ -144,7 +148,7 @@ public class ProductController {
 	// categories wise product fetch
 	@GetMapping("/categories/{categoryId}/products")
 	public ResponseEntity<ProductResponse> getProductByCategory(@PathVariable int categoryId,
-			@RequestParam(value = "pageNo", required = false, defaultValue = "0") int pageNo,
+			@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNo,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "5") int pageSize) {
 		ProductResponse productByCategory = service.getProductByCategory(categoryId, pageNo, pageSize);
 		return new ResponseEntity<ProductResponse>(productByCategory, HttpStatus.OK);
@@ -156,8 +160,8 @@ public class ProductController {
     @PostMapping("/products/images/{productId}")
     public ResponseEntity<?> uploadImageOfProduct(
             @PathVariable int productId,
-            @RequestParam("product_image") MultipartFile file
-    ) {
+            @RequestParam("product_image") MultipartFile file  //producct_image in request param used in postman also
+     ) {
 
         ProductDto product = this.service.getProduct(productId);
         String imageName = null;
@@ -181,8 +185,13 @@ public class ProductController {
         ProductDto product = this.service.getProduct(productId);
         String imageName = product.getImageName();
         String fullPath = imagePath + File.separator + imageName;
+        
+        //to get the resource using full path
         InputStream resource = this.fileUpload.getResource(fullPath);
+        
+        //to set the response content as image
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        //to get the output
         OutputStream outputStream = response.getOutputStream();
         StreamUtils.copy(resource, outputStream);
 

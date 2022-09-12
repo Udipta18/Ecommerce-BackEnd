@@ -124,4 +124,12 @@ public class OrderServiceImpl implements OrderService {
 		return this.mapper.map(order, OrderDto.class);
 	}
 
+	@Override
+	public List<OrderDto> getOrderOfUser(String username) {
+		User user = this.userRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("User not found with given user"));
+        List<Order> ordersOfUser = this.orderRepo.findByUser(user);
+        return ordersOfUser.stream().map(order -> this.mapper.map(order, OrderDto.class)).collect(Collectors.toList());
+		
+	}
+
 }

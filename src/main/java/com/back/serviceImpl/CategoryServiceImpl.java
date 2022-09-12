@@ -85,4 +85,12 @@ public class CategoryServiceImpl implements CategoryService {
 		return response;
 
 	}
+
+	@Override
+	public List<CategoryDto> get() {
+		List<Category> all = this.categoryRepository.findAll();
+		List<CategoryDto> dtos = all.stream().map((cat) -> this.mapper.map(cat, CategoryDto.class))
+				.collect(Collectors.toList());
+		return dtos;
+	}
 }

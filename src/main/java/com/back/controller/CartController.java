@@ -18,7 +18,7 @@ import com.back.payload.ItemRequest;
 import com.back.service.CartService;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/carts")
 public class CartController {
 	
 	/* String userName="sksubhgo@gmail.com"; */

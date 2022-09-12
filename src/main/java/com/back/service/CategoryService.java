@@ -23,4 +23,7 @@ public interface CategoryService  {
 
 		//get all
 		CategoryResponse get(int pageNo,int pageSize,String sortBy,String sortDir);
+		
+		//get all without pagination
+		List<CategoryDto> get();
 }
