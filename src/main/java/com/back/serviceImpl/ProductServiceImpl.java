@@ -53,11 +53,14 @@ public class ProductServiceImpl implements ProductService {
 		else{
 			sr=Sort.by(sortBy).descending();
 		}
-		
-		Pageable pageable = PageRequest.of(pageNo, pageSize,sr);
+		//Pageable pageable = PageRequest.of(pageNo, pageSize,sr);
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		Page<Product> page = this.productRepository.findAll(pageable);
 		List<Product> all = page.getContent();
-		List<ProductDto> dtos = all.stream().map(product -> this.modelMapper.map(product, ProductDto.class))
+		
+		  List<Product> collect = all.stream().filter(p -> p.isLive()).collect(Collectors.toList());
+		
+		List<ProductDto> dtos = collect.stream().map(product -> this.modelMapper.map(product, ProductDto.class))
 				.collect(Collectors.toList());
 
 		ProductResponse response = new ProductResponse();
@@ -127,6 +130,25 @@ public class ProductServiceImpl implements ProductService {
 		response.setLastPage(page.isLast());
 
 		return response;
+	}
+
+	@Override
+	public ProductResponse getAllProductWithoutPagination() {
+		  List<Product> findAll = this.productRepository.findAll();
+		  List<ProductDto> dtos = findAll.stream().map(product -> this.modelMapper.map(product, ProductDto.class))
+			.collect(Collectors.toList());
+		  
+		  ProductResponse response = new ProductResponse();
+		  
+			response.setContent(dtos);
+			/*
+			 * response.setPageNumber(page.getNumber());
+			 * response.setPageSize(page.getSize());
+			 * response.setTotalElements(page.getTotalElements());
+			 * response.setTotalPages(page.getTotalPages());
+			 * response.setLastPage(page.isLast());
+			 */
+			return response;
 	}
 
 }

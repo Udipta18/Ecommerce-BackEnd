@@ -112,6 +112,12 @@ public class ProductController {
 		return new ResponseEntity<ProductDto>(productDto, HttpStatus.OK);
 
 	}
+	
+	@GetMapping("/products/getAll")
+	public ResponseEntity<ProductResponse> getAllProduct() {
+		ProductResponse allProduct = service.getAllProductWithoutPagination();
+		return new ResponseEntity<ProductResponse>(allProduct, HttpStatus.OK);
+	}
 
 	/**
 	 * This method provide url to delete product

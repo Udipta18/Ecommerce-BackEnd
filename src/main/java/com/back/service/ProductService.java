@@ -33,6 +33,8 @@ public interface ProductService {
 	 */
 	public  ProductResponse getAllProduct(int pageNo,int pageSize,String sortBy,String sortDir);
 	
+	public ProductResponse getAllProductWithoutPagination();
+	
 	
 
 	/**
